@@ -17,7 +17,14 @@ class Opensus:
         
         self.sys_included = {'sihsus': self.basepath+'SIHSUS/200801_/Dados/', 
                              'siasus': self.basepath+'SIASUS/200801_/Dados/'}
+        self.base_error = ftplib.all_errors[1]
         
+    def reconnect_if_needed(self):
+        try:
+            self.baseftp.pwd()
+        except self.base_error as err:
+            self.baseftp = FTP(self._host)
+            self.baseftp.login()
     
     # ---------------------------------------
     # -- hide host string from the interface.
@@ -39,6 +46,8 @@ class Opensus:
                     String {default = None}. Name of the folder where to list the
                     files. If None, lists the files in the home folder.
         '''
+        self.reconnect_if_needed()
+
         if origin is None:
             self.baseftp.cwd('/dissemin/publicos/')
             self.baseftp.retrlines('LIST')
@@ -51,6 +60,8 @@ class Opensus:
         '''
             ...
         '''
+        self.reconnect_if_needed()
+
         this_year = dt.date.today().year
         if year < 2008 or year > this_year:
             raise Exception() # --
