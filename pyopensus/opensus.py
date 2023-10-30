@@ -16,7 +16,12 @@ class Opensus:
         self.basepath = '/dissemin/publicos/'
         
         self.sys_included = {'sihsus': self.basepath+'SIHSUS/200801_/Dados/', 
-                             'siasus': self.basepath+'SIASUS/200801_/Dados/'}
+                             'siasus': self.basepath+'SIASUS/200801_/Dados/',
+                             'sim': self.basepath+'SIM/CID10/DORES/',
+                             'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/'}
+        
+        
+        os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1") # consolidate this better
         self.base_error = ftplib.all_errors[1]
         
     def reconnect_if_needed(self):
@@ -56,9 +61,25 @@ class Opensus:
                 self.baseftp.cwd(self.sys_included[origin.lower()])
                 self.baseftp.retrlines('LIST')
 
-    def retrieve_year(self, dest, origin, uf, year, mode="RD", verbose=False):
+    def retrieve_year(self, dest, origin, uf, year, preffix="RD", verbose=False):
         '''
-            ...
+            Download data for a given year from one of the allowed sources.
+
+            Args:
+            -----
+                dest:
+                    String. Output folder.
+                origin:
+                    String. Source of the data.
+                uf:
+                    String. UF string for a given brazilian state.
+                year:
+                    Integer. Year referring to the desired data. 
+                preffix:
+                    String. Preffix string referring to the type of the data stored
+                    for the system.
+                verbose:
+                    Bool. Verbose.
         '''
         self.reconnect_if_needed()
 
@@ -72,7 +93,7 @@ class Opensus:
             self.baseftp.cwd(self.sys_included[origin.lower()])
             
         year_str = f'{year}'[2:]
-        filename = f"{mode}{uf.upper()}{year_str}"
+        filename = f"{preffix}{uf.upper()}{year_str}"
         month_lst = ['01', '02', '03', '04', '05', '06', '07',
                      '08', '09', '10', '11', '12']
             
@@ -86,3 +107,9 @@ class Opensus:
                 
             if verbose:
                 print(' Feito.')
+
+    def dbctodbf(self):
+        '''
+        
+        '''
+        pass
