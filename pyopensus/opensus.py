@@ -5,9 +5,12 @@ import ftplib
 import datetime as dt
 from ftplib import FTP 
 
+import utils
+
 class Opensus:
     '''
-    
+        Simple interface to download open source health data from DATASUS 
+        from their FTP protocol. 
     '''
     def __init__(self) -> None:
         self._host = 'ftp.datasus.gov.br'
@@ -20,8 +23,6 @@ class Opensus:
                              'sim': self.basepath+'SIM/CID10/DORES/',
                              'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/'}
         
-        
-        os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1") # consolidate this better
         self.base_error = ftplib.all_errors[1]
         
     def reconnect_if_needed(self):
@@ -39,7 +40,7 @@ class Opensus:
     
     @host.setter
     def host(self, v):
-        raise Exception() # --
+        raise Exception('No change allowed for host string.')
         
     def listdir(self, origin=None):
         '''
@@ -61,7 +62,7 @@ class Opensus:
                 self.baseftp.cwd(self.sys_included[origin.lower()])
                 self.baseftp.retrlines('LIST')
 
-    def retrieve_year(self, dest, origin, uf, year, preffix="RD", verbose=False):
+    def retrieve_year(self, dest, origin, uf, year, preffix="RD", to_dbf=False, verbose=False):
         '''
             Download data for a given year from one of the allowed sources.
 
@@ -70,25 +71,40 @@ class Opensus:
                 dest:
                     String. Output folder.
                 origin:
-                    String. Source of the data.
+                    String. Source of the requested data.
                 uf:
-                    String. UF string for a given brazilian state.
+                    String. UF string for a brazilian state.
                 year:
-                    Integer. Year referring to the desired data. 
+                    Integer. Year referring to the requested data. 
                 preffix:
                     String. Preffix string referring to the type of the data stored
-                    for the system.
+                    for the system. For example, if a reduced AIH from SIHSUS is requested, 
+                    then the preffix should be 'RD'.
+                to_dbf:
+                    Bool. Whether downloaded .DBC file must be converted to DBF.
                 verbose:
                     Bool. Verbose.
+
+            Return:
+            -------
+                None.
         '''
         self.reconnect_if_needed()
+        
+        # -- create folders
+        if not os.path.isdir(os.path.join(dest, "DBC")):
+            os.mkdir(os.path.join(dest, "DBC"))
+        if not os.path.isdir(os.path.join(dest, "DBF")):
+            os.mkdir(os.path.join(dest, "DBF"))
 
+        # -- validate year
         this_year = dt.date.today().year
         if year < 2008 or year > this_year:
-            raise Exception() # --
+            raise Exception('Not able to retrieve parsed year.') 
             
+        # -- check whether the source is supported.
         if origin.lower() not in self.sys_included.keys():
-            raise Exception() # --
+            raise Exception('System source not supported.')
         else:
             self.baseftp.cwd(self.sys_included[origin.lower()])
             
@@ -98,18 +114,20 @@ class Opensus:
                      '08', '09', '10', '11', '12']
             
         for cur_month in month_lst:
-            filename_ = f'{filename}{cur_month}.dbc'
+            filename_dbc = f'{filename}{cur_month}.dbc'
+            filename_dbf = f'{filename}{cur_month}.dbf'
             if verbose:
-                print(f'Download do arquivo {filename_} ...', end='')
+                print(f'Download do arquivo {filename_dbc} ...', end='')
                 
-            with open(os.path.join(dest, filename_), 'wb') as fp:
-                self.baseftp.retrbinary(f'RETR {filename_}', fp.write)
+            with open(os.path.join(dest, "DBC", filename_dbc), 'wb') as fp:
+                self.baseftp.retrbinary(f'RETR {filename_dbc}', fp.write)
                 
+            # -- conversion to DBF
+            if to_dbf:
+                path_to_dbc = os.path.join(dest, "DBC", filename_dbc)
+                path_to_dbf = os.path.join(dest, "DBF", filename_dbf)
+                utils.dbc2dbf(path_to_dbc, path_to_dbf)
+            
+            # --
             if verbose:
                 print(' Feito.')
-
-    def dbctodbf(self):
-        '''
-        
-        '''
-        pass
