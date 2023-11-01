@@ -5,7 +5,7 @@ import ftplib
 import datetime as dt
 from ftplib import FTP 
 
-import utils
+import pyopensus.utils as utils
 
 class Opensus:
     '''
@@ -62,7 +62,7 @@ class Opensus:
                 self.baseftp.cwd(self.sys_included[origin.lower()])
                 self.baseftp.retrlines('LIST')
 
-    def retrieve_year(self, dest, origin, uf, year, preffix="RD", to_dbf=False, verbose=False):
+    def retrieve_year(self, dest:str, origin:str, uf:str, year:int, preffix="RD", to_dbf=False, verbose=False):
         '''
             Download data for a given year from one of the allowed sources.
 
@@ -90,6 +90,12 @@ class Opensus:
                 None.
         '''
         self.reconnect_if_needed()
+
+        # -- check whether the source is supported.
+        if origin.lower() not in self.sys_included.keys():
+            raise Exception('System source not supported.')
+        else:
+            self.baseftp.cwd(self.sys_included[origin.lower()])
         
         # -- create folders
         if not os.path.isdir(os.path.join(dest, "DBC")):
@@ -97,37 +103,14 @@ class Opensus:
         if not os.path.isdir(os.path.join(dest, "DBF")):
             os.mkdir(os.path.join(dest, "DBF"))
 
-        # -- validate year
-        this_year = dt.date.today().year
-        if year < 2008 or year > this_year:
-            raise Exception('Not able to retrieve parsed year.') 
-            
-        # -- check whether the source is supported.
-        if origin.lower() not in self.sys_included.keys():
-            raise Exception('System source not supported.')
+        if origin.lower()=='siasus' or origin.lower()=='sihsus':
+            utils.retrieve_siasih(self.baseftp, dest, uf, year, preffix, to_dbf, verbose)
+        elif origin.lower()=='sinasc' or origin.lower()=='sim':
+            print('...')
+            utils.retrieve_vital(self.baseftp, dest, origin.lower(), uf, year, to_dbf, verbose)
         else:
-            self.baseftp.cwd(self.sys_included[origin.lower()])
+            pass
             
-        year_str = f'{year}'[2:]
-        filename = f"{preffix}{uf.upper()}{year_str}"
-        month_lst = ['01', '02', '03', '04', '05', '06', '07',
-                     '08', '09', '10', '11', '12']
+        
+        
             
-        for cur_month in month_lst:
-            filename_dbc = f'{filename}{cur_month}.dbc'
-            filename_dbf = f'{filename}{cur_month}.dbf'
-            if verbose:
-                print(f'Download do arquivo {filename_dbc} ...', end='')
-                
-            with open(os.path.join(dest, "DBC", filename_dbc), 'wb') as fp:
-                self.baseftp.retrbinary(f'RETR {filename_dbc}', fp.write)
-                
-            # -- conversion to DBF
-            if to_dbf:
-                path_to_dbc = os.path.join(dest, "DBC", filename_dbc)
-                path_to_dbf = os.path.join(dest, "DBF", filename_dbf)
-                utils.dbc2dbf(path_to_dbc, path_to_dbf)
-            
-            # --
-            if verbose:
-                print(' Feito.')
