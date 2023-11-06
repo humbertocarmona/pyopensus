@@ -16,10 +16,10 @@ parser.add_argument('--base')
 parser.add_argument('--uf')
 parser.add_argument('--ano-inicial')
 parser.add_argument('--ano-final')
-parser.add_argument('--dbf')
+parser.add_argument('--dbf', type=bool, default=False)
 parser.add_argument('--output')
 parser.add_argument('--preffix', default=None)
-parser.add_argument('--verbose')
+parser.add_argument('--verbose', type=bool, default=False)
 
 args = parser.parse_args()
 
@@ -33,11 +33,9 @@ preffix = args.preffix
 verbose = args.verbose
 
 # -------------- connect --------------
-
 opensus = Opensus()
 
 ano_range = range(int(inicial), int(final)+1)
-
 for ano in ano_range:
-    opensus.retrieve_year(output, uf, ano, preffix=preffix, to_dbf=to_dbf, verbose=verbose)
+    opensus.retrieve_year(output, base, uf, ano, preffix=preffix, to_dbf=to_dbf, verbose=verbose)
 
