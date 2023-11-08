@@ -21,7 +21,8 @@ class Opensus:
         self.sys_included = {'sihsus': self.basepath+'SIHSUS/200801_/Dados/', 
                              'siasus': self.basepath+'SIASUS/200801_/Dados/',
                              'sim': self.basepath+'SIM/CID10/DORES/',
-                             'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/'}
+                             'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/',
+                             'cnes': self.basepath+'CNES/200508_/Dados/'}
         
         self.base_error = ftplib.all_errors[1]
         
@@ -31,6 +32,15 @@ class Opensus:
         except self.base_error as err:
             self.baseftp = FTP(self._host)
             self.baseftp.login()
+
+    def preffix_dictionary(self, origin : str):
+        '''
+            Descriptions of available preffixes for a given source.
+        '''
+        preffix_hash = utils.preffix_dictionary()
+
+        if origin.lower() in preffix_hash.keys():
+            return preffix_hash[origin]
     
     # ---------------------------------------
     # -- hide host string from the interface.
@@ -62,6 +72,7 @@ class Opensus:
                 self.baseftp.cwd(self.sys_included[origin.lower()])
                 self.baseftp.retrlines('LIST')
 
+    # -- global function to handle calls
     def retrieve_year(self, dest:str, origin:str, uf:str, year:int, preffix="RD", to_dbf=False, verbose=False):
         '''
             Download data for a given year from one of the allowed sources.
@@ -103,14 +114,14 @@ class Opensus:
         if not os.path.isdir(os.path.join(dest, "DBF")):
             os.mkdir(os.path.join(dest, "DBF"))
 
+        # -- specify calls
         if origin.lower()=='siasus' or origin.lower()=='sihsus':
             utils.retrieve_siasih(self.baseftp, dest, uf, year, preffix, to_dbf, verbose)
         elif origin.lower()=='sinasc' or origin.lower()=='sim':
             print('...')
             utils.retrieve_vital(self.baseftp, dest, origin.lower(), uf, year, to_dbf, verbose)
+        elif origin.lower()=='cnes':
+            utils.retrieve_cnes(self.baseftp, dest, uf, year, preffix, to_dbf, verbose)
         else:
             pass
-            
-        
-        
             
