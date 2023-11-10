@@ -1,3 +1,4 @@
+import os
 import struct
 import codecs
 
@@ -6,7 +7,7 @@ from simpledbf.simpledbf import DbfBase
 
 
 # -- copy from simpledbf library excluded assertion error --
-class DBF_v2(DbfBase):
+class DBFIX(DbfBase):
     '''
     DBF version 5 file processing object.
 
