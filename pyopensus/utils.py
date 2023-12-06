@@ -2,8 +2,8 @@ import datetime as dt
 
 # -- set path for R (need to make it more consistent)
 import os
-os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1")
-#os.environ["R_HOME"] = os.path.join(os.environ['PROGRAMFILES'], "R", "R-4.3.1") 
+#os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1")
+os.environ["R_HOME"] = os.path.join(os.environ['PROGRAMFILES'], "R", "R-4.3.1") 
 
 import rpy2
 import rpy2.robjects as robjects
