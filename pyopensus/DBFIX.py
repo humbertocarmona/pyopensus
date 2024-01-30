@@ -2,6 +2,7 @@ import os
 import struct
 import codecs
 
+import datetime
 from simpledbf import Dbf5
 from simpledbf.simpledbf import DbfBase
 
