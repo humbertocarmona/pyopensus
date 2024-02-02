@@ -10,7 +10,7 @@ import pyopensus.utils as utils
 class Opensus:
     '''
         Simple interface to download open source health data from DATASUS 
-        from their FTP protocol. 
+        using their FTP protocol. 
     '''
     def __init__(self) -> None:
         self._host = 'ftp.datasus.gov.br'
