@@ -1,9 +1,14 @@
 import os
+import platform
 import datetime as dt
 
 # -- set path for R (need to make it more consistent)
 # -- more consistent option so far it is using the R binary from conda
-os.environ["R_HOME"] = os.path.join(os.environ["CONDA_PREFIX"], "bin")
+
+if 'linux' in platform.system().lower(): # -- linux
+    os.environ["R_HOME"] = os.path.join(os.environ["CONDA_PREFIX"])
+else: # -- windows
+    os.environ["R_HOME"] = os.path.join(os.environ["CONDA_PREFIX"], "Lib", "R")
 
 import rpy2
 import rpy2.robjects as robjects
