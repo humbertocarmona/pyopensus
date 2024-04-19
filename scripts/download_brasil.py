@@ -4,7 +4,7 @@ sys.path.append("..")
 from pyopensus import Opensus
 
 base = "SIHSUS"
-inicial = '2023'
+inicial = '2008'
 final = '2024'
 to_dbf = True
 preffix = "RD"
@@ -22,7 +22,7 @@ uf_sudeste = ['ES', 'MG', 'RJ', 'SP']
 uf_sul = ['SC', 'PR', 'RS']
 ano_range = range(int(inicial), int(final)+1)
 
-for uf in uf_ne+uf_sul:
+for uf in uf_sudeste:
     for ano in ano_range:
         try:
             opensus.retrieve_year(output, base, uf, ano, preffix=preffix, to_dbf=to_dbf, verbose=verbose)
