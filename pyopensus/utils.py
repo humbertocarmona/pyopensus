@@ -197,7 +197,20 @@ def retrieve_cnes(baseftp, dest, uf, year, preffix, to_dbf, verbose):
 
 def retrieve_sinan(baseftp, dest, year, preffix, to_dbf, verbose):
     '''
-        ...
+        Retrieve national SINAN data regarding specific disorder.
+
+        Args:
+        -----
+            dest:
+                String.
+            year:
+                Integer.
+            preffix:
+                String.
+            to_dbf:
+                Bool.
+            verbose:
+                Bool.
     '''
     # -- validate preffix
     preffixes = preffix_dictionary()["sinan"].keys()
