@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from pathlib import Path
 import ftplib
 import datetime as dt
 from ftplib import FTP 
@@ -22,7 +23,8 @@ class Opensus:
                              'siasus': self.basepath+'SIASUS/200801_/Dados/',
                              'sim': self.basepath+'SIM/CID10/DORES/',
                              'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/',
-                             'cnes': self.basepath+'CNES/200508_/Dados/'}
+                             'cnes': self.basepath+'CNES/200508_/Dados/',
+                             'sinan': self.basepath+'SINAN/DADOS/FINAIS/'}
         
         self.base_error = ftplib.all_errors[1]
         
@@ -122,6 +124,8 @@ class Opensus:
             utils.retrieve_vital(self.baseftp, dest, origin.lower(), uf, year, to_dbf, verbose)
         elif origin.lower()=='cnes':
             utils.retrieve_cnes(self.baseftp, dest, uf, year, preffix, to_dbf, verbose)
+        elif origin.lower()=='sinan':
+            utils.retrieve_sinan(self.baseftp, dest, year, preffix, to_dbf, verbose)
         else:
             pass
             

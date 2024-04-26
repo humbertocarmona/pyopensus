@@ -72,7 +72,12 @@ def preffix_dictionary():
         'ST': 'Estabelecimentos',
     }
 
-    dictionaries = {'sihsus': sih_hash, 'siasus': sia_hash, 'cnes': cnes_hash}
+    sinan_hash = {
+        "DENG": "Dengue", 'CHIK': 'Chikungunya', "ACBI": "Acidentes Biológicos",
+        "CHAG": "Chagas", "DIFT": "Difteria",
+    }
+
+    dictionaries = {'sihsus': sih_hash, 'siasus': sia_hash, 'cnes': cnes_hash, 'sinan': sinan_hash}
     return dictionaries
 
 # -------------------------------------------
@@ -190,3 +195,39 @@ def retrieve_cnes(baseftp, dest, uf, year, preffix, to_dbf, verbose):
         if verbose:
             print(' Feito.')
 
+def retrieve_sinan(baseftp, dest, year, preffix, to_dbf, verbose):
+    '''
+        ...
+    '''
+    # -- validate preffix
+    preffixes = preffix_dictionary()["sinan"].keys()
+    if preffix not in preffixes:
+        raise Exception('Preffix does not match any available source.')
+    else:
+        pass
+        #baseftp.cwd(preffix)
+
+    # -- validate year
+    this_year = dt.date.today().year
+    if year < 2006 or year > this_year:
+        raise Exception('Not able to retrieve parsed year.')
+    
+    year_str = f'{year}'[2:]
+    filename = f"{preffix}BR{year_str}"
+    filename_dbc = f'{filename}.dbc'
+    filename_dbf = f'{filename}.dbf'
+
+    if verbose:
+        print(f'Download do arquivo {filename_dbc} ...', end='')
+        
+    with open(os.path.join(dest, "DBC", filename_dbc), 'wb') as fp:
+        baseftp.retrbinary(f'RETR {filename_dbc}', fp.write)
+            
+    # -- conversion to DBF
+    if to_dbf:
+        path_to_dbc = os.path.join(dest, "DBC", filename_dbc)
+        path_to_dbf = os.path.join(dest, "DBF", filename_dbf)
+        dbc2dbf(path_to_dbc, path_to_dbf)
+        
+    if verbose:
+        print(' Feito.')
