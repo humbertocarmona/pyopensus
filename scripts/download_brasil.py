@@ -20,6 +20,8 @@ uf_all = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
 uf_ne = ['AL', 'BA', 'MA', 'CE', 'RN', 'SE', 'PI', 'PB', 'PE']
 uf_sudeste = ['ES', 'MG', 'RJ', 'SP']
 uf_sul = ['SC', 'PR', 'RS']
+uf_centro = ['GO', 'MS', 'MT']
+uf_norte = []
 ano_range = range(int(inicial), int(final)+1)
 
 for uf in uf_sudeste:
