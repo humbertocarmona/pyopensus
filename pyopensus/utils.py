@@ -98,6 +98,11 @@ def retrieve_siasih(baseftp, dest, uf, year, preffix, to_dbf, verbose):
     filename = f"{preffix}{uf.upper()}{year_str}"
     month_lst = ['01', '02', '03', '04', '05', '06', 
                  '07', '08', '09', '10', '11', '12']
+
+    if year==this_year:
+        processed_date = dt.datetime.today() - dt.timedelta(months=3)
+        if processed_date.year == this_year:
+            month_lst = [ f'{n}:2.0f'.replace(" ", "0") for n in range(processed_date.year) ]
     
     for cur_month in month_lst:
         filename_dbc = f'{filename}{cur_month}.dbc'
