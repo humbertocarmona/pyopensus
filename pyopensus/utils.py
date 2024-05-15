@@ -1,6 +1,7 @@
 import os
 import platform
 import datetime as dt
+from dateutil.relativedelta import relativedelta
 
 # -- set path for R (need to make it more consistent)
 # -- more consistent option so far it is using the R binary from conda
@@ -100,10 +101,10 @@ def retrieve_siasih(baseftp, dest, uf, year, preffix, to_dbf, verbose):
                  '07', '08', '09', '10', '11', '12']
 
     if year==this_year:
-        processed_date = dt.datetime.today() - dt.timedelta(months=3)
+        processed_date = dt.datetime.today() - relativedelta(months=2)
         if processed_date.year == this_year:
-            month_lst = [ f'{n}:2.0f'.replace(" ", "0") for n in range(processed_date.year) ]
-    
+            month_lst = [ f'{n+1:2.0f}'.replace(" ", "0") for n in range(processed_date.month+1) ]
+
     for cur_month in month_lst:
         filename_dbc = f'{filename}{cur_month}.dbc'
         filename_dbf = f'{filename}{cur_month}.dbf'
