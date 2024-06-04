@@ -6,6 +6,9 @@ import ftplib
 import datetime as dt
 from ftplib import FTP 
 
+from simpledbf import Dbf5
+from pyopensus.DBFIX import DBFIX
+
 import pyopensus.utils as utils
 
 class Opensus:
@@ -74,6 +77,70 @@ class Opensus:
                 self.baseftp.cwd(self.sys_included[origin.lower()])
                 self.baseftp.retrlines('LIST')
 
+    def retrieve_file(self, dest:str, origin:str, filename:str, to_dbf=False, to_parquet=False, verbose=False):
+        '''
+            Download data for a given year from one of the allowed sources.
+
+            Args:
+            -----
+                dest:
+                    String. Output folder.
+                origin:
+                    String. Source of the requested data. Ex: SIHSUS, SINAN, etc.
+                filename:
+                    String. Name of the file without extension.
+                preffix:
+                    String. Preffix string referring to the type of the data stored
+                    for the system. For example, if a reduced AIH from SIHSUS is requested, 
+                    then the preffix should be 'RD'.
+                to_dbf:
+                    Bool. Whether downloaded .DBC file must be converted to DBF.
+                verbose:
+                    Bool. Verbose.
+
+            Return:
+            -------
+                None.
+        '''
+        self.reconnect_if_needed()
+        # -- check whether the source is supported.
+        if origin.lower() not in self.sys_included.keys():
+            raise Exception('System source not supported.')
+        else:
+            self.baseftp.cwd(self.sys_included[origin.lower()])
+
+        # -- create folders
+        if not os.path.isdir(os.path.join(dest, "DBC")):
+            os.mkdir(os.path.join(dest, "DBC"))
+        if not os.path.isdir(os.path.join(dest, "DBF")):
+            os.mkdir(os.path.join(dest, "DBF"))
+        if to_parquet and not os.path.isdir(os.path.join(dest, "PARQUET")):
+            os.mkdir(os.path.join(dest, "PARQUET"))
+
+        filename_ = Path(filename).stem
+
+        filename_dbc = f'{filename_}.dbc'
+        filename_dbf = f'{filename_}.dbf'
+        if verbose:
+            print(f'Download do arquivo {filename_dbc} ...', end='')
+            
+        with open(os.path.join(dest, "DBC", filename_dbc), 'wb') as fp:
+            self.baseftp.retrbinary(f'RETR {filename_dbc}', fp.write)
+                
+        # -- conversion to DBF
+        if to_dbf:
+            path_to_dbc = os.path.join(dest, "DBC", filename_dbc)
+            path_to_dbf = os.path.join(dest, "DBF", filename_dbf)
+            utils.dbc2dbf(path_to_dbc, path_to_dbf)
+
+            if to_parquet:
+                temp_df = Dbf5(os.path.join(dest, "DBF", filename_dbf), codec='latin').to_dataframe()
+                temp_df.to_parquet(os.path.join(dest, "PARQUET", filename_+'.parquet'))
+
+        if verbose:
+            print(' Feito.')
+
+    
     # -- global function to handle calls
     def retrieve_year(self, dest:str, origin:str, uf:str, year:int, preffix="RD", to_dbf=False, verbose=False):
         '''
