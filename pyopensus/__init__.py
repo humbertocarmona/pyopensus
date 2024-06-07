@@ -1,2 +1,2 @@
-from .opensus import Opensus
-from .DBFIX import DBFIX
+from .opensus.opensus import Opensus
+from .utils.DBFIX import DBFIX

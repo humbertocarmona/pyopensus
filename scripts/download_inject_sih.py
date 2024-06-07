@@ -4,13 +4,13 @@ from pathlib import Path
 import pandas as pd
 
 from pyopensus import Opensus
-from storage import WarehouseInjector
+from pyopensus.storage.whandler_sus import HandlerSIH
 
 basefolder = Path.home().joinpath("Documents", "data", "opendatasus", "sihsus")
 warehouse_location = Path.home().joinpath("Documents", "data", "opendatasus")
 warehouse_name = "SIH_CNES_WAREHOUSE.db"
 
-warehouse_injector = WarehouseInjector(warehouse_location, warehouse_name)
+warehouse_injector = HandlerSIH(warehouse_location, warehouse_name)
 opensus = Opensus()
 
 uf_list = ["CE"]

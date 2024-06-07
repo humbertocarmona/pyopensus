@@ -6,28 +6,16 @@ from simpledbf import Dbf5
 from pathlib import Path
 
 # -- import the warehouse class
-from storage import WarehouseSUS
+from pyopensus.storage.whandler_base import HandlerBase
+from pyopensus.storage.warehouse_sus import WarehouseSIM, WarehouseSIH
 
-class WarehouseInjector:
+# ------------------ SIHSUS & CNES --------------------
+
+class HandlerSIH(HandlerBase):
     def __init__(self, warehouse_location, warehouse_name):
-        self.warehouse_location = Path(warehouse_location)
-        self.warehouse_name = Path(warehouse_name)
-
-        self.engine_url = f"sqlite:///{self.warehouse_location.joinpath(self.warehouse_name)}"
-        self.warehouse = WarehouseSUS(self.engine_url)
-        self.engine = self.warehouse.db_init()
-
-    def drop_tables(self, tables_to_delete=None):
-        '''
-            If it is necessary to delete all current stored data before injection, then
-            this function will perform this operation.
-        '''
-        table_names = tables_to_delete
-        if tables_to_delete is None:
-            table_names = list(self.warehouse.tables.keys())
-        for tb_name in table_names:
-            self.warehouse.delete_table(tb_name, is_sure=True, authkey="###!Y!.")
-        self.warehouse = WarehouseIST(self.engine_url)
+        super().__init__(warehouse_location, warehouse_name)
+    
+        self.warehouse = WarehouseSIM(self.engine_url)
         self.engine = self.warehouse.db_init()
     
     def insert_sih(self, sih_df, sih_fname, preffix, verbose=False):
@@ -77,4 +65,28 @@ class WarehouseInjector:
             self.warehouse.insert('cnes_profissionais', cnes_df, batchsize=200, verbose=verbose)
         elif preffix == "SR":
             self.warehouse.insert('cnes_servico_especializado', cnes_df, batchsize=200, verbose=verbose)
+
+
+# ------------------ SIM --------------------
+
+class HandlerSIM(HandlerBase):
+    def __init__(self, warehouse_location, warehouse_name):
+        super().__init__(warehouse_location, warehouse_name)
+    
+        self.warehouse = WarehouseSIM(self.engine_url)
+        self.engine = self.warehouse.db_init()
+    
+    def insert_sim(self, sim_df, sim_fname, verbose=False):
+        '''
+            Insert records to SIM warehouse from data expected to come
+            from the official SIM data (official schema).
+        '''
+        fonte_name = Path(sim_fname).stem
+        sim_df["DTOBITO"] = pd.to_datetime(sim_df["DTOBITO"], format="%d%m%Y", errors='coerce')
+        sim_df["DTNASC"] = pd.to_datetime(sim_df["DTNASC"], format="%d%m%Y", errors='coerce')
+        sim_df["FONTE_DADOS"] = [ fonte_name for n in range(sim_df.shape[0]) ]
+        sim_df = sim_df.rename({"contador": "CONTADOR"}, axis=1)
+        sim_df["CHAVE_CONTADOR_FONTE"] = sim_df["CONTADOR"] + sim_df["FONTE_DADOS"]
+
+        self.warehouse.insert('sim', sim_df, batchsize=200, verbose=verbose)
         
