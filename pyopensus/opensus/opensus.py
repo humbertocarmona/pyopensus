@@ -7,9 +7,8 @@ import datetime as dt
 from ftplib import FTP 
 
 from simpledbf import Dbf5
-from pyopensus.DBFIX import DBFIX
-
-import pyopensus.utils as utils
+from pyopensus.utils.DBFIX import DBFIX
+import pyopensus.utils.utils as utils
 
 class Opensus:
     '''
@@ -22,12 +21,16 @@ class Opensus:
         self.baseftp.login()
         self.basepath = '/dissemin/publicos/'
         
-        self.sys_included = {'sihsus': self.basepath+'SIHSUS/200801_/Dados/', 
+        self.sys_included = {'sihsus': self.basepath+'SIHSUS/200801_/Dados/',
+                             'sihsus_1992_2007': self.basepath+'SIHSUS/199201_200712/Dados/' 
                              'siasus': self.basepath+'SIASUS/200801_/Dados/',
+                             'siasus_1994_2007': self.basepath+'SIASUS/199401_200712/Dados/' 
                              'sim': self.basepath+'SIM/CID10/DORES/',
                              'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/',
                              'cnes': self.basepath+'CNES/200508_/Dados/',
-                             'sinan': self.basepath+'SINAN/DADOS/FINAIS/'}
+                             'sinan': self.basepath+'SINAN/DADOS/FINAIS/',
+                             'painel_oncologia': self.basepath+'painel_oncologia/Dados/',
+                             'pni': self.basepath+'PNI/DADOS/'}
         
         self.base_error = ftplib.all_errors[1]
         
@@ -86,7 +89,7 @@ class Opensus:
 
     def retrieve_file(self, dest:str, origin:str, filename:str, to_dbf=False, to_parquet=False, verbose=False):
         '''
-            Download data for a given year from one of the allowed sources.
+            Download data based on the filename and origin from one of the allowed sources.
 
             Args:
             -----
