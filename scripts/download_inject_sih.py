@@ -25,6 +25,8 @@ preffix_dict = {
 
 for origin in origin_list:
     for preffix in preffix_dict[origin]:
+        if preffix=="RD":
+            continue
         for uf in uf_list:
             for yy in yy_list:
                 for mm in mm_list:

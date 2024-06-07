@@ -57,6 +57,13 @@ class Opensus:
     def host(self, v):
         raise Exception('No change allowed for host string.')
         
+    def get_sources(self):
+        '''
+            List the sources available for download using the interface.
+        '''
+        return list(self.sys_included.keys())
+
+    
     def listdir(self, origin=None):
         '''
             List the files and folder of a specific directory within the host FTP.
@@ -86,7 +93,8 @@ class Opensus:
                 dest:
                     String. Output folder.
                 origin:
-                    String. Source of the requested data. Ex: SIHSUS, SINAN, etc.
+                    String. DATASUS source of the requested data. Examples of sources are: SIHSUS, SINAN, SIM, etc.
+                    A list of available sources can be displayed by calling Opensus.get_sources().
                 filename:
                     String. Name of the file without extension.
                 preffix:
@@ -95,6 +103,8 @@ class Opensus:
                     then the preffix should be 'RD'.
                 to_dbf:
                     Bool. Whether downloaded .DBC file must be converted to DBF.
+                to_parquet:
+                    Bool. Active only when 'to_dbf=True'. Whether downloaded .DBF file must be converted to PARQUET.
                 verbose:
                     Bool. Verbose.
 
@@ -109,7 +119,7 @@ class Opensus:
         else:
             self.baseftp.cwd(self.sys_included[origin.lower()])
 
-        # -- create folders
+        # -- create folders (if they do not exist)
         if not os.path.isdir(os.path.join(dest, "DBC")):
             os.mkdir(os.path.join(dest, "DBC"))
         if not os.path.isdir(os.path.join(dest, "DBF")):
@@ -118,21 +128,22 @@ class Opensus:
             os.mkdir(os.path.join(dest, "PARQUET"))
 
         filename_ = Path(filename).stem
+        filename_dbc, filename_dbf = f'{filename_}.dbc', f'{filename_}.dbf'
 
-        filename_dbc = f'{filename_}.dbc'
-        filename_dbf = f'{filename_}.dbf'
         if verbose:
             print(f'Download do arquivo {filename_dbc} ...', end='')
             
+        # -- FTP download.
         with open(os.path.join(dest, "DBC", filename_dbc), 'wb') as fp:
             self.baseftp.retrbinary(f'RETR {filename_dbc}', fp.write)
                 
-        # -- conversion to DBF
+        # -- conversion of DBC file to a DBF file.
         if to_dbf:
             path_to_dbc = os.path.join(dest, "DBC", filename_dbc)
             path_to_dbf = os.path.join(dest, "DBF", filename_dbf)
             utils.dbc2dbf(path_to_dbc, path_to_dbf)
 
+            # -- conversion of DBF file to a PARQUET file (memory-efficient format).
             if to_parquet:
                 temp_df = Dbf5(os.path.join(dest, "DBF", filename_dbf), codec='latin').to_dataframe()
                 temp_df.to_parquet(os.path.join(dest, "PARQUET", filename_+'.parquet'))

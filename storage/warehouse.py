@@ -21,6 +21,7 @@ from sqlalchemy.exc import InternalError, IntegrityError
 # -- import the data models
 from storage.sih_data_models import AIH, ServicosAIH
 from storage.cnes_data_models import Estabelecimentos, Profissionais, Leitos, ServicoEspecializado
+from storage.sim_data_models import SIM
 
 # -- utility class
 class smart_dict(dict):
@@ -461,3 +462,19 @@ class WarehouseSUS:
         except Exception as error:
             print(error.args[0])
             return []
+
+
+
+class WarehouseSIM(WarehouseSUS):
+    def __init__(self, engine_url):
+        self._engine = create_engine(engine_url, future=True)
+        self._metadata = MetaData()
+        self._tables = {}
+        self._mappings = {}
+
+        # -- include the data models
+        self._imported_data_models = [ SIM(self._metadata).define()]
+
+        for elem in self._imported_data_models:
+            self._tables.update(elem[0])
+            self._mappings.update(elem[1])   

@@ -17,12 +17,14 @@ class WarehouseInjector:
         self.warehouse = WarehouseSUS(self.engine_url)
         self.engine = self.warehouse.db_init()
 
-    def drop_tables(self):
+    def drop_tables(self, tables_to_delete=None):
         '''
             If it is necessary to delete all current stored data before injection, then
             this function will perform this operation.
         '''
-        table_names = list(self.warehouse.tables.keys())
+        table_names = tables_to_delete
+        if tables_to_delete is None:
+            table_names = list(self.warehouse.tables.keys())
         for tb_name in table_names:
             self.warehouse.delete_table(tb_name, is_sure=True, authkey="###!Y!.")
         self.warehouse = WarehouseIST(self.engine_url)
@@ -44,6 +46,9 @@ class WarehouseInjector:
         sih_df["FONTE"] = [ fonte_name for n in range(sih_df.shape[0]) ]
         
         if preffix == "RD":
+            for dt_col in ["NASC", "DT_INTER", "DT_SAIDA"]:
+                sih_df[dt_col] = pd.to_datetime(sih_df[dt_col], errors="coerce")
+
             self.warehouse.insert('aih_reduzida', sih_df, batchsize=200, verbose=verbose)
         elif preffix == "SP":
             self.warehouse.insert('servicos_profissionais', sih_df, batchsize=200, verbose=verbose)
