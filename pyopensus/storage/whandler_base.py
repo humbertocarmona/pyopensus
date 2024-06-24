@@ -30,7 +30,7 @@ class HandlerBase:
             table_names = list(self.warehouse.tables.keys())
         for tb_name in table_names:
             self.warehouse.delete_table(tb_name, is_sure=True, authkey="###!Y!.")
-        self.warehouse = WarehouseIST(self.engine_url)
+        self.warehouse = WarehouseBase(self.engine_url)
         self.engine = self.warehouse.db_init()
     
     def insert_data(self):
