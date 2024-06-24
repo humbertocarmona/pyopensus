@@ -15,7 +15,7 @@ class HandlerSIH(HandlerBase):
     def __init__(self, warehouse_location, warehouse_name):
         super().__init__(warehouse_location, warehouse_name)
     
-        self.warehouse = WarehouseSIM(self.engine_url)
+        self.warehouse = WarehouseSIH(self.engine_url)
         self.engine = self.warehouse.db_init()
     
     def insert_sih(self, sih_df, sih_fname, preffix, verbose=False):

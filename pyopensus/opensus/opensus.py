@@ -22,9 +22,9 @@ class Opensus:
         self.basepath = '/dissemin/publicos/'
         
         self.sys_included = {'sihsus': self.basepath+'SIHSUS/200801_/Dados/',
-                             'sihsus_1992_2007': self.basepath+'SIHSUS/199201_200712/Dados/' 
+                             'sihsus_1992_2007': self.basepath+'SIHSUS/199201_200712/Dados/', 
                              'siasus': self.basepath+'SIASUS/200801_/Dados/',
-                             'siasus_1994_2007': self.basepath+'SIASUS/199401_200712/Dados/' 
+                             'siasus_1994_2007': self.basepath+'SIASUS/199401_200712/Dados/', 
                              'sim': self.basepath+'SIM/CID10/DORES/',
                              'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/',
                              'cnes': self.basepath+'CNES/200508_/Dados/',

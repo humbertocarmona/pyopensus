@@ -14,7 +14,7 @@ warehouse_injector = HandlerSIH(warehouse_location, warehouse_name)
 opensus = Opensus()
 
 uf_list = ["CE"]
-yy_list = [f"{yy}"[2:] for yy in range(2008, 2024+1)]
+yy_list = [f"{yy}"[2:] for yy in range(2014, 2018+1)]
 mm_list = [ f"{n:2.0f}".replace(" ", "0") for n in range(1, 12+1) ]
 origin_list = ["SIHSUS"]
 
@@ -25,8 +25,8 @@ preffix_dict = {
 
 for origin in origin_list:
     for preffix in preffix_dict[origin]:
-        if preffix=="RD":
-            continue
+        #if preffix=="RD":
+        #    continue
         for uf in uf_list:
             for yy in yy_list:
                 for mm in mm_list:

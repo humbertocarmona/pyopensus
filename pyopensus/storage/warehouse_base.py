@@ -56,7 +56,7 @@ class WarehouseBase:
         self._mappings = {}
 
         # -- include the data models
-        self._imported_data_models = None
+        self._imported_data_models = []
 
         for elem in self._imported_data_models:
             self._tables.update(elem[0])
