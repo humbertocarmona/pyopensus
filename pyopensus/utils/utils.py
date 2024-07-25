@@ -20,6 +20,37 @@ import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 from rpy2.robjects.packages import PackageNotInstalledError
 
+
+def find_r_executable():
+    # Check if an environment variable is set
+    r_path = os.getenv('R_HOME')
+    if r_path:
+        r_executable = os.path.join(r_path, 'bin', 'R')
+        if os.path.exists(r_executable):
+            return r_executable
+    
+    # Search common installation paths
+    common_paths = [
+        '/usr/bin/R',
+        '/usr/local/bin/R',
+        'C:\\Program Files\\R\\R-4.0.0\\bin\\R',  # Example for Windows
+        'C:\\Program Files\\R\\R-4.1.0\\bin\\R'   # Update this for the expected versions
+    ]
+    for path in common_paths:
+        if os.path.exists(path):
+            return path
+    
+    # Check if R is in the system PATH
+    try:
+        r_executable = subprocess.check_output(['which', 'R']).decode('utf-8').strip()
+        if os.path.exists(r_executable):
+            return r_executable
+    except subprocess.CalledProcessError:
+        pass
+    
+    raise RuntimeError("R executable not found. Please install R or set the R_HOME environment variable.")
+
+
 try:
     read_dbc = importr('read.dbc')
 except PackageNotInstalledError as err:
