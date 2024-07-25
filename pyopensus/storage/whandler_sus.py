@@ -20,7 +20,8 @@ class HandlerSIH(HandlerBase):
     
     def insert_sih(self, sih_df, sih_fname, preffix, verbose=False):
         '''
-            ...
+            Given a dataframe originated from the SIHSUS database, inserts it into the
+            SIH integrated database.
 
             Args:
             -----
@@ -36,10 +37,13 @@ class HandlerSIH(HandlerBase):
         if preffix == "RD":
             for dt_col in ["NASC", "DT_INTER", "DT_SAIDA"]:
                 sih_df[dt_col] = pd.to_datetime(sih_df[dt_col], errors="coerce")
-
             self.warehouse.insert('aih_reduzida', sih_df, batchsize=200, verbose=verbose)
         elif preffix == "SP":
             self.warehouse.insert('servicos_profissionais', sih_df, batchsize=200, verbose=verbose)
+        elif preffix == "RJ":
+            for dt_col in ["NASC", "DT_INTER", "DT_SAIDA"]:
+                sih_df[dt_col] = pd.to_datetime(sih_df[dt_col], errors="coerce")
+            self.warehouse.insert('rejeitadas', sih_df, batchsize=200, verbose=verbose)
 
     def insert_cnes(self, cnes_df, cnes_fname, preffix, verbose=False):
         '''

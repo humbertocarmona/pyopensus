@@ -7,7 +7,7 @@ from sqlalchemy import Column, Table, MetaData
 from pyopensus.storage.warehouse_base import WarehouseBase
 
 # -- import the data models
-from pyopensus.storage.sih_data_models import AIH, ServicosAIH
+from pyopensus.storage.sih_data_models import AIH, ServicosAIH, Rejeitadas
 from pyopensus.storage.cnes_data_models import Estabelecimentos, Profissionais, Leitos, ServicoEspecializado
 from pyopensus.storage.sim_data_models import SIM
 
@@ -24,6 +24,7 @@ class WarehouseSIH(WarehouseBase):
         # -- include the data models
         self._imported_data_models = [ AIH(self._metadata).define(),
                                        ServicosAIH(self._metadata).define(),
+                                       Rejeitadas(self._metadata).define(),
                                        Estabelecimentos(self._metadata).define(),
                                        Leitos(self._metadata).define(),
                                        Profissionais(self._metadata).define(),

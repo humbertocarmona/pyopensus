@@ -13,15 +13,16 @@ warehouse_name = "SIH_CNES_WAREHOUSE.db"
 warehouse_injector = HandlerSIH(warehouse_location, warehouse_name)
 opensus = Opensus()
 
-uf_list = ["CE"]
-yy_list = [f"{yy}"[2:] for yy in range(2014, 2018+1)]
-mm_list = [ f"{n:2.0f}".replace(" ", "0") for n in range(1, 12+1) ]
-origin_list = ["SIHSUS"]
-
 preffix_dict = {
-    "SIHSUS": ["RD", "SP"],
+    "SIHSUS": ["RD", "SP", "RJ"],
     "CNES": ["ST", "LT", "PR", "SR"]
 }
+
+uf_list = ["CE"]
+origin_list = [ "SIHSUS" ]
+yy_list = ['14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24']
+mm_list = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ]
+
 
 for origin in origin_list:
     for preffix in preffix_dict[origin]:
