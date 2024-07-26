@@ -43,7 +43,7 @@ class HandlerSIH(HandlerBase):
         elif preffix == "RJ":
             for dt_col in ["NASC", "DT_INTER", "DT_SAIDA"]:
                 sih_df[dt_col] = pd.to_datetime(sih_df[dt_col], errors="coerce")
-            self.warehouse.insert('rejeitadas', sih_df, batchsize=200, verbose=verbose)
+            self.warehouse.insert('aih_rejeitada', sih_df, batchsize=200, verbose=verbose)
 
     def insert_cnes(self, cnes_df, cnes_fname, preffix, verbose=False):
         '''
