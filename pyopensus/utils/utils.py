@@ -1,5 +1,5 @@
 import os
-import platform
+import subprocess
 import datetime as dt
 from dateutil.relativedelta import relativedelta
 
@@ -15,57 +15,14 @@ from dateutil.relativedelta import relativedelta
 os.environ["R_HOME"] = os.path.join(os.environ["PROGRAMFILES"], "R", "R-4.3.1")
 # -- sesa pc
 #os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1")
+os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.4.1")
 
 import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 from rpy2.robjects.packages import PackageNotInstalledError
 
-
-def find_r_executable():
-    # Check if an environment variable is set
-    r_path = os.getenv('R_HOME')
-    if r_path:
-        r_executable = os.path.join(r_path, 'bin', 'R')
-        if os.path.exists(r_executable):
-            return r_executable
-    
-    # Search common installation paths
-    common_paths = [
-        '/usr/bin/R',
-        '/usr/local/bin/R',
-        'C:\\Program Files\\R\\R-4.0.0\\bin\\R',  # Example for Windows
-        'C:\\Program Files\\R\\R-4.1.0\\bin\\R'   # Update this for the expected versions
-    ]
-    for path in common_paths:
-        if os.path.exists(path):
-            return path
-    
-    # Check if R is in the system PATH
-    try:
-        r_executable = subprocess.check_output(['which', 'R']).decode('utf-8').strip()
-        if os.path.exists(r_executable):
-            return r_executable
-    except subprocess.CalledProcessError:
-        pass
-    
-    raise RuntimeError("R executable not found. Please install R or set the R_HOME environment variable.")
-
-
-try:
-    read_dbc = importr('read.dbc')
-except PackageNotInstalledError as err:
-    raise Exception("Need to install package from rpy2")
-
-# -- functions
-
-def dbc2dbf(path_to_dbc, path_to_dbf):
-    read_dbc.dbc2dbf(path_to_dbc, path_to_dbf)
-
 # -- preffix dictionary
 def preffix_dictionary():
-    '''
-    
-    '''
     sih_hash = {
         'ER': 'AIH Rejeitadas com código de erro',
         'RD': 'AID Reduzida',
@@ -111,6 +68,47 @@ def preffix_dictionary():
 
     dictionaries = {'sihsus': sih_hash, 'siasus': sia_hash, 'cnes': cnes_hash, 'sinan': sinan_hash}
     return dictionaries
+
+# -- functions
+
+def find_r_executable():
+    # Check if an environment variable is set
+    r_path = os.getenv('R_HOME')
+    if r_path:
+        r_executable = os.path.join(r_path, 'bin', 'R')
+        if os.path.exists(r_executable):
+            return r_executable
+    
+    # Search common installation paths
+    common_paths = [
+        '/usr/bin/R',
+        '/usr/local/bin/R',
+        'C:\\Program Files\\R\\R-4.0.0\\bin\\R',  # Example for Windows
+        'C:\\Program Files\\R\\R-4.1.0\\bin\\R'   # Update this for the expected versions
+    ]
+    for path in common_paths:
+        if os.path.exists(path):
+            return path
+    
+    # Check if R is in the system PATH
+    try:
+        r_executable = subprocess.check_output(['which', 'R']).decode('utf-8').strip()
+        if os.path.exists(r_executable):
+            return r_executable
+    except subprocess.CalledProcessError:
+        pass
+    
+    raise RuntimeError("R executable not found. Please install R or set the R_HOME environment variable.")
+
+
+def dbc2dbf(path_to_dbc, path_to_dbf):
+    try:
+        read_dbc = importr('read.dbc')
+    except PackageNotInstalledError as err:
+        raise Exception("Need to install package from rpy2")
+
+    read_dbc.dbc2dbf(path_to_dbc, path_to_dbf)
+
 
 # -------------------------------------------
 # --------- specifics for retrieval ---------
