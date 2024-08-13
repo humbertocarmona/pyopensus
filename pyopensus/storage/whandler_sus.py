@@ -7,7 +7,7 @@ from pathlib import Path
 
 # -- import the warehouse class
 from pyopensus.storage.whandler_base import HandlerBase
-from pyopensus.storage.warehouse_sus import WarehouseSIM, WarehouseSIH
+from pyopensus.storage.warehouse_sus import WarehouseSIM, WarehouseSIH, WarehouseCNES
 
 # ------------------ SIHSUS & CNES --------------------
 
@@ -69,6 +69,15 @@ class HandlerSIH(HandlerBase):
             self.warehouse.insert('cnes_profissionais', cnes_df, batchsize=200, verbose=verbose)
         elif preffix == "SR":
             self.warehouse.insert('cnes_servico_especializado', cnes_df, batchsize=200, verbose=verbose)
+
+
+class HandlerCNES(HandlerBase):
+    def __init__(self, warehouse_location, warehouse_name):
+        super().__init__(warehouse_location, warehouse_name)
+    
+        self.warehouse = WarehouseCNES(self.engine_url)
+        self.engine = self.warehouse.db_init()
+
 
 
 # ------------------ SIM --------------------

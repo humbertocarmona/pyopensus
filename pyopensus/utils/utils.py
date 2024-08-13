@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 os.environ["R_HOME"] = os.path.join(os.environ["PROGRAMFILES"], "R", "R-4.3.1")
 # -- sesa pc
 #os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1")
-os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.4.1")
+#os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.4.1")
 
 import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr

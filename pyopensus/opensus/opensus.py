@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 from pathlib import Path
 import ftplib
@@ -87,7 +86,7 @@ class Opensus:
                 self.baseftp.cwd(self.sys_included[origin.lower()])
                 self.baseftp.retrlines('LIST')
 
-    def retrieve_file(self, dest:str, origin:str, filename:str, to_dbf=False, to_parquet=False, verbose=False):
+    def retrieve_file(self, dest:str, origin:str, filename:str, preffix_folder=None, to_dbf=False, to_parquet=False, verbose=False):
         '''
             Download data based on the filename and origin from one of the allowed sources.
 
@@ -101,9 +100,9 @@ class Opensus:
                 filename:
                     String. Name of the file without extension.
                 preffix:
-                    String. Preffix string referring to the type of the data stored
-                    for the system. For example, if a reduced AIH from SIHSUS is requested, 
-                    then the preffix should be 'RD'.
+                    String. Preffix string referring to the type of the data stored for the system. 
+                    For instance, CNES data is stored in different folders for each preffix. So, a preffix
+                    is needed in order to retrieve file.
                 to_dbf:
                     Bool. Whether downloaded .DBC file must be converted to DBF.
                 to_parquet:
@@ -121,6 +120,9 @@ class Opensus:
             raise Exception('System source not supported.')
         else:
             self.baseftp.cwd(self.sys_included[origin.lower()])
+
+        if preffix_folder is not None:
+            self.baseftp.cwd(preffix_folder)
 
         # -- create folders (if they do not exist)
         if not os.path.isdir(os.path.join(dest, "DBC")):

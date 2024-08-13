@@ -100,6 +100,13 @@ class WarehouseBase:
     def db_init(self):
         self._metadata.create_all(self._engine)
         return self._engine
+
+    # ------------------ expected column names for each table ------------------
+
+    def expected_columns(self):
+        data_models = [ table_model_dict[0] for table_model_dict in self._imported_data_models ]
+        expected_cols_models = { list(model.keys())[0] : [ col.name for col in list(model.values())[0].columns] for model in data_models }
+        return expected_cols_models
     
     # ------------------ CRUD ------------------
 
