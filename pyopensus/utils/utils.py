@@ -110,6 +110,32 @@ def dbc2dbf(path_to_dbc, path_to_dbf):
     read_dbc.dbc2dbf(path_to_dbc, path_to_dbf)
 
 
+def perform_query(query_str, engine, batchsize=1000):
+    '''
+        Given a SQL query and the sqlalchemy engine corresponding to a
+        database, performs and return the result of the query.
+    '''
+
+    schema_data = {
+        'rows': [],
+        'columns': [],
+    }
+
+    query_str = text(query_str)
+    with engine.connect() as conn:
+        qres = conn.execute(query_str)
+        schema_data['columns'] = list(qres.keys())
+
+        while True:
+            rows = qres.fetchmany(batchsize)
+            if not rows:
+                break
+            schema_data["rows"] += [ row for row in rows ]
+    
+    res_df = pd.DataFrame(schema_data['rows'], columns=schema_data['columns'])
+    return res_df
+
+
 # -------------------------------------------
 # --------- specifics for retrieval ---------
 # -------------------------------------------
