@@ -28,6 +28,7 @@ class Opensus:
                              'sinasc': self.basepath+'SINASC/1996_/Dados/DNRES/',
                              'cnes': self.basepath+'CNES/200508_/Dados/',
                              'sinan': self.basepath+'SINAN/DADOS/FINAIS/',
+                             'sinan_prelim': self.basepath+'SINAN/DADOS/PRELIM/',
                              'painel_oncologia': self.basepath+'painel_oncologia/Dados/',
                              'pni': self.basepath+'PNI/DADOS/'}
         
