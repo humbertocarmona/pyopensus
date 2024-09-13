@@ -17,7 +17,6 @@ class BaseFlux:
     def build_network(self):
         pass
 
-    def 
         
 
 
