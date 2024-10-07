@@ -32,6 +32,7 @@ class HandlerSIH(HandlerBase):
 
         '''
         fonte_name = Path(sih_fname).stem
+        fonte_name = fonte_name.replace("RD", "").replace("SP", "").replace("RJ", "")
         sih_df["FONTE"] = [ fonte_name for n in range(sih_df.shape[0]) ]
         
         if preffix == "RD":
