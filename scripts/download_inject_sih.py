@@ -26,7 +26,7 @@ preffix_dict = {
 }
 
 #uf_list = ["CE", "BA", "PE", "RN", "PI", "PB", "MA", "SE", "AL"]
-uf_list = ["PE"]
+uf_list = ["RN"]
 origin_list = [ "SIHSUS" ]
 yy_list = ['08', '09', '10', '11', '12', '13', '14', 
            '15', '16', '17', '18', '19', '20', '21', 
