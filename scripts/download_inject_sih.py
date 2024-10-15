@@ -3,7 +3,6 @@
     data into a database. 
 '''
 
-
 import sys
 sys.path.append("..")
 from pathlib import Path
@@ -14,7 +13,8 @@ from pyopensus.storage.whandler_sus import HandlerSIH
 
 basefolder = Path.home().joinpath("Documents", "data", "opendatasus", "sihsus")
 warehouse_location = Path.home().joinpath("Documents", "data", "opendatasus")
-warehouse_name = "SIHSUS_NORDESTE.db"
+#warehouse_name = "SIHSUS_NORDESTE_NO_SERVICE.db"
+warehouse_name = "SIHSUS_SUDESTE_NO_SERVICE.db"
 
 # -- load the database schema
 warehouse_injector = HandlerSIH(warehouse_location, warehouse_name)
@@ -22,11 +22,11 @@ opensus = Opensus()
 
 preffix_dict = {
     #"SIHSUS": ["RD", "SP", "RJ"],
-    "SIHSUS": ["SP"],
+    "SIHSUS": ["RD", "RJ"],
 }
 
 #uf_list = ["CE", "BA", "PE", "RN", "PI", "PB", "MA", "SE", "AL"]
-uf_list = ["RN"]
+uf_list = ["SP", "MG", "RJ", "ES"]
 origin_list = [ "SIHSUS" ]
 yy_list = ['08', '09', '10', '11', '12', '13', '14', 
            '15', '16', '17', '18', '19', '20', '21', 
@@ -60,9 +60,4 @@ for origin in origin_list: # -- loop on the database (only SIHSUS)
                     # ---- delete PARQUET file
                     if basefolder.joinpath("PARQUET", f"{fname}.parquet").is_file():
                         basefolder.joinpath("PARQUET", f"{fname}.parquet").unlink()
-                
-
-
-
-
 
