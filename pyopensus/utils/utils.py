@@ -13,14 +13,14 @@ from dateutil.relativedelta import relativedelta
 #else: # -- windows
 #    os.environ["R_HOME"] = os.path.join(os.environ["CONDA_PREFIX"], "Lib", "R")
 
-os.environ["R_HOME"] = os.path.join(os.environ["PROGRAMFILES"], "R", "R-4.3.1")
+#os.environ["R_HOME"] = os.path.join(os.environ["PROGRAMFILES"], "R", "R-4.3.1")
 # -- sesa pc
 #os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.3.1")
 #os.environ["R_HOME"] = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "R", "R-4.4.1")
 
-import rpy2.robjects as robjects
-from rpy2.robjects.packages import importr
-from rpy2.robjects.packages import PackageNotInstalledError
+#import rpy2.robjects as robjects
+#from rpy2.robjects.packages import importr
+#from rpy2.robjects.packages import PackageNotInstalledError
 
 # -- preffix dictionary
 def preffix_dictionary():
@@ -102,13 +102,13 @@ def find_r_executable():
     raise RuntimeError("R executable not found. Please install R or set the R_HOME environment variable.")
 
 
-def dbc2dbf(path_to_dbc, path_to_dbf):
-    try:
-        read_dbc = importr('read.dbc')
-    except PackageNotInstalledError as err:
-        raise Exception("Need to install package from rpy2")
-
-    read_dbc.dbc2dbf(path_to_dbc, path_to_dbf)
+#def dbc2dbf(path_to_dbc, path_to_dbf):
+#    try:
+#        read_dbc = importr('read.dbc')
+#    except PackageNotInstalledError as err:
+#        raise Exception("Need to install package from rpy2")
+#
+#    read_dbc.dbc2dbf(path_to_dbc, path_to_dbf)
 
 
 def perform_query(query_str, engine, batchsize=1000):
