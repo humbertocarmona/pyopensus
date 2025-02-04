@@ -20,10 +20,21 @@ output_file <- args[2]
 data <- read.dbc::read.dbc(input_file)
 
 # -- ensure all character columns are encoded in UTF-8
+#data[] <- lapply(data, function(col) {
+#  if (is.character(col)) return(enc2utf8(col))
+#  return(col)
+#})
+
 data[] <- lapply(data, function(col) {
-  if (is.character(col)) return(enc2utf8(col))
+  if (is.character(col)) return(iconv(col, from = "latin1", to = "UTF-8"))
   return(col)
 })
+
+# -- ensure all character columns are encoded in Latin-1
+#data[] <- lapply(data, function(col) {
+#  if (is.character(col)) return(iconv(col, from = "", to = "latin1"))
+#  return(col)
+#})
 
 # -- write to .parquet file
 arrow::write_parquet(data, output_file)
