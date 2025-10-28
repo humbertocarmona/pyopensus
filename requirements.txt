@@ -1,0 +1,10 @@
+beautifulsoup4==4.14.2
+geopandas==1.1.1
+markdown-it-py==4.0.0
+nxviz==0.7.6
+pip==25.2
+Pygments==2.19.2
+pysus==1.0.0
+requests==2.32.5
+simpledbf==0.2.6
+SQLAlchemy==2.0.44
