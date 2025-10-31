@@ -16,6 +16,8 @@
         "DTRECEBIM",
         "DTRECORIGA",
         "HORAOBITO",
+        "MUNIC",
+        "municipios",
         "NASC",
         "opendatasus",
         "pyopensus",
