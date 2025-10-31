@@ -1,17 +1,17 @@
-# usa pysus para fazer downloads do SIH
-from pysus import SIH
+# %%
+from pysus import CNES
 from pathlib import Path
+import pandas as pd
 import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-# Add handler if missing
 if not logger.handlers:
     handler = logging.StreamHandler()  # prints to console
     formatter = logging.Formatter("[%(levelname)s] %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
+    
 # definitions
 brazil_regions = {
     "North": ["AC", "AP", "AM", "PA", "RO", "RR", "TO"],
@@ -39,19 +39,15 @@ brazil_regions_names = {
     "South": ["Paraná", "Rio Grande do Sul", "Santa Catarina"],
 }
 
-# carrega o sih
-sih = SIH().load()
-print(sih.groups)
+# %%
+cnes = CNES().load()
+print(cnes.groups)
 
-# baixa os arquivos por tipo, uf e ano e salva localmente
-# não vai baixar os arquivos (pastas) que já existem em local_dir
+# %%
 data_folder =  Path.home().joinpath("Workspace", "pyopensus", "data")
-local_dir = data_folder.joinpath("sihsus")
+local_dir = data_folder.joinpath("cnessus")
+prefixes = ["EP", "EQ", "LT", "ST", "PF", "SR"]
 
-prefix_list = ["RD", "RJ", "SP"]
-uf_list = ["CE"]
-year_list = [2008,2009,2010,2011,2012,2013,2014,2015]
-year_list = [2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]
-
-files = sih.get_files(prefix_list, uf=uf_list, year=year_list);
-sih.download(files,local_dir=local_dir)
+files = cnes.get_files(prefixes, uf=['CE'], year=[2023], month=['01'])
+cnes.download(files, local_dir=local_dir)
+# %%
